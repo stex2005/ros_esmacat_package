@@ -67,6 +67,8 @@ add_message_files(
     msg
     FILES
     message.msg
+    esmacat_publish.msg
+    esmacat_subscribe.msg
     )
 
 ## Generate services in the 'srv' folder
@@ -199,6 +201,7 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     include/${PROJECT_NAME}
+#    include/epos4_master/epos4_driver
     include/ethercat_driver/soem
     include/ethercat_driver/osal
     include/ethercat_driver/osal/${OS}
@@ -321,7 +324,6 @@ target_link_libraries(esmacat
 # catkin_add_nosetests(test)
 
 ## Add nodes CMake directories
-add_subdirectory(src/my_project)
-#add_subdirectory(src/basic)
+add_subdirectory(src/epos4_master)
 add_subdirectory(src/listener)
 add_subdirectory(src/talker)
