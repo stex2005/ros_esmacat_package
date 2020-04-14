@@ -322,6 +322,6 @@ target_link_libraries(esmacat
 
 ## Add nodes CMake directories
 add_subdirectory(src/my_project)
-add_subdirectory(src/basic)
+#add_subdirectory(src/basic)
 add_subdirectory(src/listener)
 add_subdirectory(src/talker)
