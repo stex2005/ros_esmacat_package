@@ -1,0 +1,11 @@
+<launch>
+
+<group ns="group_1">
+<node pkg="esmacat_pkg" name="project" type="my_project" output="screen" required="true" />
+<node pkg="esmacat_pkg" name="listener" type="listener_node" output="screen" launch-prefix = "gnome-terminal -- " />
+<node pkg="esmacat_pkg" name="talker" type="talker_node" output="screen" launch-prefix = "gnome-terminal -- " />
+
+</group>
+
+</launch>
+
