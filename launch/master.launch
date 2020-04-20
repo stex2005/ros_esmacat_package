@@ -1,0 +1,3 @@
+<launch>
+<node pkg="esmacat_pkg" name="master" type="master" output="screen" required="true" />
+</launch>

@@ -195,5 +195,4 @@ void print_command_keys()
   std::cout << blue_key << "\'g\'" << color_key << ": GRAVITY mode"<< "\n";
   std::cout << blue_key << "\'f\'" << color_key << ": FREEZE mode"<< "\n";
   std::cout << blue_key << "\'ENTER\'" << color_key << ": SHOW current settings and command keys\n"<< "\n";
-
 }
