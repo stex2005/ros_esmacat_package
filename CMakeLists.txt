@@ -67,8 +67,8 @@ add_message_files(
     msg
     FILES
     message.msg
-    esmacat_publish.msg
-    esmacat_subscribe.msg
+    esmacat_sensor.msg
+    esmacat_command.msg
     )
 
 ## Generate services in the 'srv' folder
@@ -245,7 +245,7 @@ target_link_libraries(esmacat
 ## The recommended prefix ensures that target names across packages don't collide
 #add_executable(basic_node src/basic_node.cpp)
 #add_executable(talker_node src/talker.cpp)
-#add_executable(listener_node src/listener.cpp)
+#add_executable(INTERFACE_node src/INTERFACE.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -265,7 +265,7 @@ target_link_libraries(esmacat
 #target_link_libraries(talker_node
 #    ${catkin_LIBRARIES})
 
-#target_link_libraries(listener_node
+#target_link_libraries(INTERFACE_node
 #    ${catkin_LIBRARIES})
 
 #############
@@ -327,3 +327,4 @@ target_link_libraries(esmacat
 add_subdirectory(src/epos4_master)
 add_subdirectory(src/listener)
 add_subdirectory(src/talker)
+add_subdirectory(src/smartbox_interface)

@@ -1,9 +1,11 @@
 #include "ros/ros.h"
 #include "esmacat_pkg/message.h"
+#include "std_msgs/String.h"
 
-void chatterCallback(const esmacat_pkg::message::ConstPtr& msg)
+
+void chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->name.c_str());
+  ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
 
 int main(int argc, char **argv)

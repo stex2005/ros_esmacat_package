@@ -1,9 +1,9 @@
-file(GLOB LISTENER_HEADERS *.h)
-file(GLOB LISTENER_SOURCES *.cpp *.c)
+file(GLOB INTERFACE_HEADERS *.h)
+file(GLOB INTERFACE_SOURCES *.cpp *.c)
 
 
-add_executable(listener_node ${LISTENER_SOURCES} ${LISTENER_HEADERS})
+add_executable(INTERFACE_node ${INTERFACE_SOURCES} ${INTERFACE_HEADERS})
 
-target_link_libraries(listener_node ${catkin_LIBRARIES})
+target_link_libraries(INTERFACE_node ${catkin_LIBRARIES})
 
-install(TARGETS listener_node DESTINATION ./bin)
+install(TARGETS INTERFACE_node DESTINATION ./bin)

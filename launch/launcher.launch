@@ -1,13 +1,12 @@
 <launch>
 
 
-<node pkg="esmacat_pkg" name="master" type="master" output="screen" required="true" />
-<?ignore
-Examples nodes
-<node pkg="esmacat_pkg" name="listener" type="listener_node" output="screen" launch-prefix = "gnome-terminal -- " />
-<node pkg="esmacat_pkg" name="talker" type="talker_node" output="screen" launch-prefix = "gnome-terminal -- " />
-?>
 
-
+<node pkg="esmacat_pkg" name="master" type="master" output="screen"  required="true" launch-prefix = "xterm -e"/>
+<node pkg="esmacat_pkg" name="interface" type="interface_node" output="screen" launch-prefix = "xterm -e"  />
+<!--
+<node pkg="esmacat_pkg" name="listener" type="listener_node" output="screen" launch-prefix = "xterm -e"  />
+<node pkg="esmacat_pkg" name="talker" type="talker_node" output="screen" launch-prefix = "xterm -e"  />
+-->
 </launch>
 

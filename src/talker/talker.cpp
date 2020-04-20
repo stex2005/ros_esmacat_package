@@ -45,9 +45,9 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<esmacat_pkg::message>("chatter", 1000);
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(100);
 
   /**
    * A count of how many messages we have sent. This is used to create
@@ -59,14 +59,14 @@ int main(int argc, char **argv)
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
-    esmacat_pkg::message msg;
+    std_msgs::String msg;
 
     std::stringstream ss;
     ss << "Hello world " << count;
-    msg.header.seq = (unsigned int) count;
-    msg.name = ss.str();
+//    msg.header.seq = (unsigned int) count;
+    msg.data = ss.str();
 
-    ROS_INFO("%s", msg.name.c_str());
+    ROS_INFO("%s", msg.data.c_str());
 
     /**
      * The publish() function is how you send messages. The parameter

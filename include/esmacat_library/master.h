@@ -26,7 +26,7 @@
 
 /** @brief The time period/cycle time of the esmacat application is set to 25000 us = 25 ms */
 /** Please change this setting to modify the rate at which the application operates */
-#define ESMACAT_TIME_PERIOD_US 25000
+#define ESMACAT_TIME_PERIOD_US 5000
 
 /** @brief Maximum Number of Ethercat slaves supported by the master */
 #define MAX_NUMBER_OF_ETHERCAT_SLAVE 100
