@@ -325,6 +325,4 @@ target_link_libraries(esmacat
 
 ## Add nodes CMake directories
 add_subdirectory(src/epos4_master)
-add_subdirectory(src/listener)
-add_subdirectory(src/talker)
 add_subdirectory(src/smartbox_interface)
