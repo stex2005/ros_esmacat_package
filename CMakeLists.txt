@@ -66,7 +66,6 @@ add_message_files(
     DIRECTORY
     msg
     FILES
-    message.msg
     esmacat_sensor.msg
     esmacat_command.msg
     )
@@ -325,6 +324,4 @@ target_link_libraries(esmacat
 
 ## Add nodes CMake directories
 add_subdirectory(src/epos4_master)
-add_subdirectory(src/listener)
-add_subdirectory(src/talker)
 add_subdirectory(src/smartbox_interface)
