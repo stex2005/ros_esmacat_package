@@ -24,9 +24,9 @@
 /** @brief Timeout value in us*/
 #define EC_TIMEOUTMON 500
 
-/** @brief The time period/cycle time of the esmacat application is set to 25000 us = 25 ms */
+/** @brief The time period/cycle time of the esmacat application is set to 500 us = 0.5 ms */
 /** Please change this setting to modify the rate at which the application operates */
-#define ESMACAT_TIME_PERIOD_US 5000
+#define ESMACAT_TIME_PERIOD_US 1000
 
 /** @brief Maximum Number of Ethercat slaves supported by the master */
 #define MAX_NUMBER_OF_ETHERCAT_SLAVE 100

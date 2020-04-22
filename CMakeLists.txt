@@ -66,7 +66,6 @@ add_message_files(
     DIRECTORY
     msg
     FILES
-    message.msg
     esmacat_sensor.msg
     esmacat_command.msg
     )

@@ -92,6 +92,8 @@ void ROS_command_thread(){
           std::cout << green_key << "Quick-swapped to STOP mode!" << color_key << std::endl;
           state = STOP;
           swap_state = true;
+          command.enable = false;
+
         }
         else
         {
@@ -104,6 +106,7 @@ void ROS_command_thread(){
           std::cout << green_key << "Quick-swapped to NULL-TORQUE mode!" << color_key << std::endl;
           state = NULLTORQUE;
           swap_state = true;
+          command.enable = true;
         }
         else
         {
@@ -182,7 +185,7 @@ void ROS_command_thread(){
 void ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg)
 {
   //Display data from hard real-time loop to the the terminal.
-      ROS_INFO(" Enc:[%i]",msg.encoder);
+      //ROS_INFO(" Enc:[%i]",msg.encoder);
 }
 
 // Print commands on terminal
