@@ -23,6 +23,18 @@ void stack_prefault(void)
 }
 // end of RT function
 
+/* Distributed Clock Configuration */
+
+boolean dcsync_enable = FALSE;
+
+static int slave_dc_config(uint16 slave)
+{
+//    ec_dcsync0(   slave,   active,           cycletime,  calc and copy time)
+    ec_dcsync0(     slave,   dcsync_enable,    1000000U,   1000U);
+    printf("ec_dcsync0 called on slave %u\n",slave);
+    return 0;
+}
+
 
 /** @brief Constructor for the esmacat_master class
  *
@@ -187,7 +199,7 @@ void esmacat_master::ecatcheck()
                 printf("OK : all slaves resumed OPERATIONAL.\n");
         }
         //suspend the execution of this thread for 10,000us
-        osal_usleep(10000);
+        osal_usleep(100000);
         //if the thread has been flagged to stop, then this loop terminates
         if (stop_thread_loop == TRUE)
         {
@@ -201,20 +213,20 @@ void esmacat_master::ecatcheck()
  */
 void esmacat_master::esmacat_master_loop()
 {
-    ec_timet t;
-    ec_timet t_prev;
-    ec_timet t_now;
-    uint32 interval = ESMACAT_TIME_PERIOD_US;
+    struct timespec t;
+    struct timespec t_prev;
+    struct timespec t_now;
+    uint32 interval = ESMACAT_TIME_PERIOD_US*1000;
     long d;
 
     //pre-fault the stack
     stack_prefault();
 
     // current time is stored in t which is expressed in the form of secs + usec
-    t = osal_current_time();
-    t_prev = osal_current_time();
+    clock_gettime(CLOCK_MONOTONIC ,&t);
+    clock_gettime(CLOCK_MONOTONIC ,&t_prev);
     // Increment t by 1 second. This ensures that there's sufficient time to complete initialization
-    t.sec++;
+    t.tv_sec++;
     // end of rt part
 
     int i, j, oloop, iloop, chk,cnt;
@@ -293,8 +305,8 @@ void esmacat_master::esmacat_master_loop()
 
             ec_slave[0].state = EC_STATE_OPERATIONAL;
             /* send one valid process data to make outputs in slaves happy*/
-            ec_send_processdata();
-            ec_receive_processdata(EC_TIMEOUTRET);
+//            ec_send_processdata();
+//            ec_receive_processdata(EC_TIMEOUTRET);
 
             /* request OP state for all slaves */
             ec_writestate(0);
@@ -316,7 +328,7 @@ void esmacat_master::esmacat_master_loop()
                 //set master flag to indicate it is in operation
 
                 inOP = TRUE;
-				t_prev = osal_current_time();
+				clock_gettime(CLOCK_MONOTONIC ,&t_prev);
                 //infinite loop
                 while(1)
                 {
@@ -362,43 +374,41 @@ void esmacat_master::esmacat_master_loop()
                     }
 
                     // set the target for the start of the next interval
-                    t.usec += interval;
+                    t.tv_nsec += interval;
 
                     // if the portion of time under the usec is higher than 1 s, then accordingly adjust the
                     // two variables under it to correctly represent the total seconds and usec
-                    while (t.usec >= USEC_PER_SEC)
+                    while (t.tv_nsec >= NSEC_PER_SEC)
                     {
-                        t.usec -= USEC_PER_SEC;
-                        t.sec++;
+                        t.tv_nsec -= NSEC_PER_SEC;
+                        t.tv_sec++;
                     }
                     // since the real-time processing has been completed, the thread is suspended (sleep)
                     // until the target time is reached
 					
-                    ec_timet sleeptime;
-                    osal_time_diff(&t_prev, &t, &sleeptime);
-                    osal_usleep((uint32)sleeptime.usec);
+                    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+											   
 
-                    //after sleep cycle is complete, obtain the current time
-                    t_now= osal_current_time();
+                    clock_gettime(CLOCK_MONOTONIC ,&t_now);
+                    
+                    
 
                     //determine the time that has elapsed between the start of the application's last loop and now (in us)
-                    d = t_now.usec - t_prev.usec;
-
-                    if (d<0)
-                    {
-                        d = d+ USEC_PER_SEC;
-                    }
-
+					d = t_now.tv_nsec - t_prev.tv_nsec;
+					if (d < 0)
+					{
+						d = d+NSEC_PER_SEC;
+					}
                     if (d> 1.02*interval)
                     {
                         error_counter++;
                     }
                     //prepare for the next interval
-                    t_prev.sec = t_now.sec;
-                    t_prev.usec = t_now.usec;
+                    t_prev.tv_sec = t_now.tv_sec;
+                    t_prev.tv_nsec = t_now.tv_nsec;
 
                     // compute elapsed time in ms
-                    time_elapsed += ((double)d/1000);
+                    time_elapsed += ((double)d/1000000);
 
                     //if thread has been flagged to be stopped, terminate the thread
                     if (stop_thread_loop == TRUE)
@@ -468,7 +478,7 @@ void esmacat_master::set_ethernet_adapter_name_for_esmacat(char* eth_adapter_nam
 /** @brief Ensures that the thread has been closed successfully */
 void esmacat_master::WaitForInternalThreadToExit()
 {
-    //(void) pthread_join(*_thread_esmacat_master_loop, NULL);
+    (void) pthread_join(*_thread_esmacat_master_loop, NULL);
 }
 
 uint32 esmacat_master::get_error_counter()
