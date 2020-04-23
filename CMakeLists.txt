@@ -323,5 +323,6 @@ target_link_libraries(esmacat
 # catkin_add_nosetests(test)
 
 ## Add nodes CMake directories
-add_subdirectory(src/epos4_master)
+# add_subdirectory(src/epos4_master)
 add_subdirectory(src/smartbox_interface)
+add_subdirectory(src/esmacat_agree_master)

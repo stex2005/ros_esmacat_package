@@ -1,0 +1,3 @@
+<launch>
+<node pkg="esmacat_pkg" name="agree" type="agree" output="screen" required="true" />
+</launch>
