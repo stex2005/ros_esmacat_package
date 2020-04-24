@@ -1,34 +1,8 @@
 #include "interface.h"
 
-int main(int argc, char **argv)
-{
-
-  //Initialize ROS
-  ros::init(argc, argv, "EsmaCAT_interface");
-
-  //Start a thread that will write cyclically data to hard real-time EsmaCAT software
-  //boost::thread boost_ROS_publish_thread(ROS_publish_thread);
-
-  //Start a thread that handles keyboard digits and writes data to hard real-time EsmaCAT software
-  boost::thread boost_ROS_command_thread(ROS_command_thread);
-
-  ROS_INFO("SmartBox ROS Interface node threads are instantiated...");
-
-  //Declare a subscriber to listen to any data sent from the hard real-time EsmaCAT software
-  ros::NodeHandle n;
-  ros::Subscriber sub = n.subscribe("EsmaCAT_pub_ecat_ros", 1000, ROS_subscribe_callback);
-
-  ros::spin();
-
-  //Join threads once execution is complete
-  ROS_INFO("Interface node threads are joining...");
-  boost_ROS_command_thread.join();
-
-  return 0;
-}
+void smartbox_interface::ROS_publish_thread(){
 
 
-void ROS_publish_thread(){
   //Declare a message and setup the publisher for that message
   esmacat_pkg::esmacat_command command;
   ros::NodeHandle n;
@@ -37,20 +11,19 @@ void ROS_publish_thread(){
 
   //Variables that setup the publishing loop
   int interim_roscount = 0;
-  int32_t encoder_count_per_turn = 1024;
-  double commanded_position_in_degrees = 0.0; //Initialize command
   double command_period_in_seconds = 10;
-
-  //SET ESCON MOTOR SWITCH TO START MOTOR OPERATION
-  command.enable = 1; // Value = 1 implies activate the motor
 
   while (ros::ok()){
 
     //SPEED CONTROL SINUSOIDAL COMMAND -----------------------------------------------------------
-    command.setpoint = 0.05*sin(1/command_period_in_seconds*(2.0*3.14159)*interim_roscount/100.0);
+    command.setpoint = (int64_t) 100*sin((2.0*3.14159)*interim_roscount/100.0);
+    command.state = interim_state;
+
+
     //--------------------------------------------------------------------------------------------
     //Send data to the hard real-time loop
     pub_esmacat_write.publish(command);
+    if(interim_state==EXIT) ros::shutdown();
 
     loop_rate.sleep();
     interim_roscount++;
@@ -58,22 +31,29 @@ void ROS_publish_thread(){
 
 }
 
-void ROS_command_thread(){
+/************************/
+/* ROS Subscriber Thread */
+/************************/
 
+void smartbox_interface::ROS_subscribe_thread(){
+
+  //Setup a subscriber that will get data from other ROS nodes
+  ros::MultiThreadedSpinner spinner(1); // Use 4 threads
+
+  ros::NodeHandle n;
+
+  ros::Subscriber subscriber = n.subscribe("EsmaCAT_pub_ecat_ros", 1000, &smartbox_interface::ROS_subscribe_callback, this);
+
+  spinner.spin();
+}
+
+void smartbox_interface::ROS_command_thread(){
 
   //Initialize Robot status
   char c;
   string inputString;
   RobotState state(STOP);
   bool swap_state(false);
-
-  //Declare a message and setup the publisher for that message
-  esmacat_pkg::esmacat_command command;
-  ros::NodeHandle n;
-  ros::Publisher pub_esmacat_write = n.advertise<esmacat_pkg::esmacat_command>("EsmaCAT_sub_ecat_ros",1000);
-
-  //SET ESCON MOTOR SWITCH TO START MOTOR OPERATION
-  command.enable = 1; // Value = 1 implies activate the motor
 
   print_command_keys();
 
@@ -92,8 +72,6 @@ void ROS_command_thread(){
           std::cout << green_key << "Quick-swapped to STOP mode!" << color_key << std::endl;
           state = STOP;
           swap_state = true;
-          command.enable = false;
-
         }
         else
         {
@@ -106,7 +84,6 @@ void ROS_command_thread(){
           std::cout << green_key << "Quick-swapped to NULL-TORQUE mode!" << color_key << std::endl;
           state = NULLTORQUE;
           swap_state = true;
-          command.enable = true;
         }
         else
         {
@@ -162,13 +139,7 @@ void ROS_command_thread(){
                  */
 
 
-      command.state = state;
-
-      ROS_INFO("Publish State: %li", command.state);
-      pub_esmacat_write.publish(command);
-
-      ros::spinOnce();
-
+      interim_state = state;
 
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -177,19 +148,18 @@ void ROS_command_thread(){
     {
       std::cout << yellow_key << state_labels[state] << color_key << " is the state currently active" << std::endl;
     } // else
+
   } // while
-  ROS_INFO("ROS command thread stopped");
 
-} // thread
-
-void ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg)
+}
+void smartbox_interface::ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg)
 {
   //Display data from hard real-time loop to the the terminal.
-      //ROS_INFO(" Enc:[%i]",msg.encoder);
+  ROS_INFO(" Enc:[%i]",msg.encoder);
 }
 
 // Print commands on terminal
-void print_command_keys()
+void smartbox_interface::print_command_keys()
 {
   std::cout << boldred_key << "\nCOMMAND KEYS:"<< color_key << std::endl;
   std::cout << blue_key << "\'k\'" << color_key << ": exit" << "\n";

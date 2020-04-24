@@ -22,29 +22,60 @@ const string color_key = "\033[0m";
 
 //Labels for states
 const string state_labels[] = {
-    "EXIT",
-    "STOP",
-    "NULLTORQUE",
-    "GRAVITY",
-    "FREEZE",
-    "QUIT",
+  "EXIT",
+  "STOP",
+  "NULLTORQUE",
+  "GRAVITY",
+  "FREEZE",
+  "QUIT",
 };
-
-void print_command_keys();
-void ROS_publish_thread();
-void ROS_command_thread();
-void ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg);
 
 enum RobotState
 {
-    EXIT,
-    STOP,
-    NULLTORQUE,
-    GRAVITY,
-    FREEZE,
-    QUIT,
+  EXIT,
+  STOP,
+  NULLTORQUE,
+  GRAVITY,
+  FREEZE,
+  QUIT,
 };
 
+class smartbox_interface
+{
+public:
+  smartbox_interface() : interim_state(STOP)
+  {
+    boost_ROS_publish_thread    = boost::thread(&smartbox_interface::ROS_publish_thread, this);
+    boost_ROS_subscribe_thread  = boost::thread(&smartbox_interface::ROS_subscribe_thread, this);
+    boost_ROS_command_thread  = boost::thread(&smartbox_interface::ROS_command_thread, this);
+    std::cout << "ROS interface objects instantiated" << std::endl;
+
+  }
+
+  ~smartbox_interface()
+  {
+    std::cout << "ROS interface threads joining" << std::endl;
+    boost_ROS_publish_thread.join();
+    boost_ROS_subscribe_thread.join();
+  }
+
+  RobotState interim_state;
+
+private:
+
+  boost::thread boost_ROS_publish_thread;
+  boost::thread boost_ROS_subscribe_thread;
+  boost::thread boost_ROS_command_thread;
+
+  void ROS_subscribe_thread();
+  void ROS_publish_thread();
+  void ROS_command_thread();
+  void ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg);
+
+  void print_command_keys();
+
+
+};
 
 
 #endif // INTERFACE_H

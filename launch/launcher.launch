@@ -1,5 +1,5 @@
 <launch>
-<node pkg="esmacat_pkg" name="interface" type="interface_node" output="screen" />
+<node pkg="esmacat_pkg" name="interface" type="interface_node" required="true" output="screen" />
 <!--
 <node pkg="esmacat_pkg" name="listener" type="listener_node" output="screen" launch-prefix = "xterm -e"  />
 <node pkg="esmacat_pkg" name="talker" type="talker_node" output="screen" launch-prefix = "xterm -e"  />
