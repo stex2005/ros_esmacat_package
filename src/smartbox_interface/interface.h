@@ -24,6 +24,8 @@ const string color_key = "\033[0m";
 const string state_labels[] = {
   "EXIT",
   "STOP",
+  "CURRENT",
+  "TORQUE",
   "NULLTORQUE",
   "GRAVITY",
   "FREEZE",
@@ -34,6 +36,8 @@ enum RobotState
 {
   EXIT,
   STOP,
+  CURRENT,
+  TORQUE,
   NULLTORQUE,
   GRAVITY,
   FREEZE,

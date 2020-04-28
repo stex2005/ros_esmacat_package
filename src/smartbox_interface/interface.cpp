@@ -90,6 +90,31 @@ void smartbox_interface::ROS_command_thread(){
           std::cout << yellow_key << "Already in NULL-TORQUE mode" << color_key <<  std::endl;
         }
         break;
+      case 'c': case 'C':
+        if (state != CURRENT)
+        {
+          std::cout << green_key << "Quick-swapped to CURRENT mode!" << color_key << std::endl;
+          state = CURRENT;
+          swap_state = true;
+        }
+        else
+        {
+          std::cout << yellow_key << "Already in CURRENT mode" << color_key <<  std::endl;
+        }
+        break;
+      case 't': case 'T':
+        if (state != TORQUE)
+        {
+          std::cout << green_key << "Quick-swapped to TORQUE mode!" << color_key << std::endl;
+          state = TORQUE;
+          swap_state = true;
+        }
+        else
+        {
+          std::cout << yellow_key << "Already in NULL-TORQUE mode" << color_key <<  std::endl;
+        }
+        break;
+
       case 'g': case 'G':
         if (state != GRAVITY)
         {
@@ -164,6 +189,8 @@ void smartbox_interface::print_command_keys()
   std::cout << boldred_key << "\nCOMMAND KEYS:"<< color_key << std::endl;
   std::cout << blue_key << "\'k\'" << color_key << ": exit" << "\n";
   std::cout << blue_key << "\'s\'" << color_key << ": STOP mode"<< "\n";
+  std::cout << blue_key << "\'c\'" << color_key << ": CURRENT mode"<< "\n";
+  std::cout << blue_key << "\'t\'" << color_key << ": TORQUE mode"<< "\n";
   std::cout << blue_key << "\'n\'" << color_key << ": NULL-TORQUE mode" << "\n";
   std::cout << blue_key << "\'g\'" << color_key << ": GRAVITY mode"<< "\n";
   std::cout << blue_key << "\'f\'" << color_key << ": FREEZE mode"<< "\n";
