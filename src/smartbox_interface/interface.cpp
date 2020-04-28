@@ -180,7 +180,7 @@ void smartbox_interface::ROS_command_thread(){
 void smartbox_interface::ROS_subscribe_callback(const esmacat_pkg::esmacat_sensor msg)
 {
   //Display data from hard real-time loop to the the terminal.
-  ROS_INFO(" Enc:[%i]",msg.encoder);
+  // ROS_INFO(" Enc:[%i]",msg.encoder);
 }
 
 // Print commands on terminal
